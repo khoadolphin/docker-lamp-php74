@@ -1,0 +1,69 @@
+# VIẾT THEO CÚ PHÁP YAML, CHÚ Ý CHÍNH XÁC KHOẢNG TRẮNG ĐẦU CÁC DÒNG
+
+version: "3" # chọn viết theo bản 3 docs.docker.com/compose/compose-file/
+
+services:                         # CÁC DỊCH VỤ (CONTAINER) NĂM TRONG services
+  # pro-memcached:                  # (((1))) BẮT ĐẦU TẠO DỊCH VỤ THỨ NHẤT
+  #   image: "memcached:latest"     # Image tạo ra dịch vụ
+  #   container_name: c-memcached01 # Tên container khi chạy
+  #   restart: always
+  #   hostname: memcached
+  #   networks:
+  #     - my-network                # nối vào mạng my-network (tạo mạng này ở dưới)
+  #   command:
+  #     - "--conn-limit=2048"       # Giới hạn kết nối là 2048
+  #     - "--memory-limit=2048"     # Giới hạn cho phép dùng tới 4096 MB bộ nhớ làm cache
+  apache:                   # (((2))) TẠO DỊCH VỤ HTTPD
+    build:
+      context: .
+      dockerfile: ./httpd/Dockerfile
+      tags:
+        - "httpd:v2"
+    # image: "httpd:version2"       # sử dụng image custome lại ở trên để tạo container
+    container_name: c-httpd01     # tên khi chạy container HTTPD
+    restart: always
+    hostname: httpd01
+    networks:
+      - my-network
+    ports:
+      - "80:80"                 # Mở cổng 8080 public, ánh xạ vào 80
+      # - "443:443"
+
+    volumes:                      # Ánh xạ thự mục vào container
+      - ../:/app     # Bind ổ đĩa - dir-site
+  database:                      # (((3))) TẠO DỊCH VỤ MYSQL
+    image: "mysql:5.7"
+    container_name: mysql-product
+    restart: always
+    hostname: mysql01
+    networks:
+      - my-network
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=docker
+      - MYSQL_USER=docker
+      - MYSQL_DATABASE=docker
+    volumes:
+      - ./db/mysql/:/var/lib/mysql  # thư mục lưu DB
+      - ./db/my.cnf:/etc/mysql/my.cnf  # ánh xạ file cấu hình
+
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - my-network
+    ports:
+      - 8080:8080
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - ./cache:/data
+networks:                             # TẠO NETWORK
+  my-network:
+    driver: bridge 
