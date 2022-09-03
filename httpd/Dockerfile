@@ -12,7 +12,7 @@ RUN a2enmod rewrite
 
 ADD ./httpd/000-default.conf /etc/apache2/sites-available/000-default.conf
 ADD ./httpd/httpd.conf /usr/local/apache2/conf/httpd.conf
-# ADD ./httpd/httpd-vhosts.conf /usr/local/apache2/conf/extra/httpd-vhosts.conf
+
 RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app /var/www/html
 
 WORKDIR /app

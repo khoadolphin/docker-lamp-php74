@@ -17,10 +17,8 @@ services:                         # CÁC DỊCH VỤ (CONTAINER) NĂM TRONG serv
     build:
       context: .
       dockerfile: ./httpd/Dockerfile
-      tags:
-        - "httpd:v2"
     # image: "httpd:version2"       # sử dụng image custome lại ở trên để tạo container
-    container_name: c-httpd01     # tên khi chạy container HTTPD
+    container_name: apache     # tên khi chạy container HTTPD
     restart: always
     hostname: httpd01
     networks:
@@ -30,10 +28,10 @@ services:                         # CÁC DỊCH VỤ (CONTAINER) NĂM TRONG serv
       # - "443:443"
 
     volumes:                      # Ánh xạ thự mục vào container
-      - ../:/app     # Bind ổ đĩa - dir-site
+      - ./www/:/app     # Bind ổ đĩa - dir-site
   database:                      # (((3))) TẠO DỊCH VỤ MYSQL
     image: "mysql:5.7"
-    container_name: mysql-product
+    container_name: mysql
     restart: always
     hostname: mysql01
     networks:
@@ -51,19 +49,22 @@ services:                         # CÁC DỊCH VỤ (CONTAINER) NĂM TRONG serv
 
   adminer:
     image: adminer
+    container_name: adminer
+
     restart: always
     networks:
       - my-network
     ports:
       - 8080:8080
-  cache:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
-      - ./cache:/data
+  # redis:
+  #   image: redis:6.2-alpine
+  #   container_name: redis
+  #   restart: always
+  #   ports:
+  #     - '6379:6379'
+  #   command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+  #   volumes: 
+  #     - ./cache:/data
 networks:                             # TẠO NETWORK
   my-network:
     driver: bridge 
