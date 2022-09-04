@@ -28,7 +28,8 @@ services:                         # CÁC DỊCH VỤ (CONTAINER) NĂM TRONG serv
       # - "443:443"
 
     volumes:                      # Ánh xạ thự mục vào container
-      - ./www/:/app     # Bind ổ đĩa - dir-site
+      - ./www/:/app     # Bind ổ đĩa 
+      - ./httpd/000-default.conf:/etc/apache2/sites-available/000-default.conf 
   database:                      # (((3))) TẠO DỊCH VỤ MYSQL
     image: "mysql:5.7"
     container_name: mysql
@@ -55,7 +56,7 @@ services:                         # CÁC DỊCH VỤ (CONTAINER) NĂM TRONG serv
     networks:
       - my-network
     ports:
-      - 8080:8080
+      - 8888:8080
   # redis:
   #   image: redis:6.2-alpine
   #   container_name: redis
