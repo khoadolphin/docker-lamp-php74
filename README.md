@@ -4,9 +4,15 @@
 
 ```
 - build:
-- context: .
-- dockerfile: ./httpd/Dockerfile # đường dẫn đến file build image
+-   context: .
+-   dockerfile: ./httpd/Dockerfile # đường dẫn đến file build image
 ```
+
+- Lưu ý khoảng cách từ build phải thụt vào 2 space hoặc 1 tab để đúng cấu trúc
+
+---
+
+
 
 ### 000-default.conf
 
